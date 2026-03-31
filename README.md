@@ -16,7 +16,7 @@ docker compose down
 adresse tableau de bord : \n
 http://localhost:8501/
 
-adresse phpmyadmin : \n
+adresse phpmyadmin :<br>
 http://localhost:8080
 username : root
 password : rootpassword
