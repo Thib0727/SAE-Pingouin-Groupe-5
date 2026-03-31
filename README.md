@@ -13,10 +13,10 @@ docker compose up -d
 arrêter le docker:
 docker compose down
 
-adresse tableau de bord : 
+adresse tableau de bord : \n
 http://localhost:8501/
 
-adresse phpmyadmin :
+adresse phpmyadmin : \n
 http://localhost:8080
 username : root
 password : rootpassword
