@@ -17,6 +17,6 @@ adresse tableau de bord : <br>
 http://localhost:8501/
 
 adresse phpmyadmin :<br>
-http://localhost:8080
-username : root
+http://localhost:8080<br>
+username : root<br>
 password : rootpassword
