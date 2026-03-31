@@ -4,16 +4,16 @@ Bonjour,
 
 Lucas Michallat, Théo Fillon et Thibaud Muller vous présente la SAE 6 Développement d'un outil décisionnel
 
-Comment lancer le docker pour la première fois : 
+Comment lancer le docker pour la première fois : <br>
 docker-compose up --build -d
 
-lancer le docker :
+lancer le docker :<br>
 docker compose up -d
 
-arrêter le docker:
+arrêter le docker:<br>
 docker compose down
 
-adresse tableau de bord : \n
+adresse tableau de bord : <br>
 http://localhost:8501/
 
 adresse phpmyadmin :<br>
