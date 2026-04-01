@@ -20,3 +20,6 @@ adresse phpmyadmin :<br>
 http://localhost:8080<br>
 username : root<br>
 password : rootpassword
+
+username app : admin<br>
+mdp app : adminpassword<br>
