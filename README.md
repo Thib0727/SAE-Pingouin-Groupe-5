@@ -4,6 +4,8 @@ Bonjour,
 
 Lucas Michallat, Théo Fillon et Thibaud Muller vous présente la SAE 6 Développement d'un outil décisionnel
 
+RENOMMER LE env.txt en ".env" AVANT DE BUILD LE CONTENEUR
+
 Comment lancer le docker pour la première fois : <br>
 docker-compose up --build -d
 
