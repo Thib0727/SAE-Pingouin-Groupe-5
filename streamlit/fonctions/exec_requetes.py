@@ -42,6 +42,10 @@ def load_all_kpi_data():
             "df_produits_finis_7j": data_produits_finis_7j(cursor),
             "df_ratio_commandes_heure": data_ratio_commandes_heure(cursor),
             "df_temps_assemblage_moyen": data_temps_assemblage_moyen(cursor),
+            "df_conformite_assemblage" : data_conformite_assemblage(cursor),
+            "df_verif_visuelle" : data_conformite_visuelle(cursor),
+            "df_pieces_manquantes" : data_pieces_manquantes_pbl(cursor),
+            "df_otif" : data_otif_par_jour(cursor)
         }
     finally:
         cursor.close()
