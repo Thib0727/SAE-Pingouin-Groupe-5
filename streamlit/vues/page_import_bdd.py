@@ -1,7 +1,9 @@
 import streamlit as st
 import os
-from fonctions.import_sql import connexion_mysql_root, exec_import_natif
+from fonctions.import_sql import exec_import_natif
+from fonctions.connexion_sql import connexion_mysql_root
 import tempfile   
+
 
 def import_bdd():
     st.title("Importer la base de données Festo")
@@ -11,6 +13,25 @@ def import_bdd():
     if uploaded_file:
         if st.button("Lancer l'importation"):
             with st.spinner("Traitement et importation en cours..."):
+                conn = connexion_mysql_root()
+                cursor = conn.cursor()
+
+                try:
+                    cursor.execute("DROP DATABASE IF EXISTS mes4")
+                    conn.commit()
+
+                    print("Base supprimée avec succès")
+
+                except Exception as e:
+                    print(f"Erreur : {e}")
+
+                finally:
+                    cursor.close()
+                    conn.close()
+
+                cursor.close()
+                conn.close()
+
                 # 1. Lecture et modification du nom de la BDD
                 raw_content = uploaded_file.getvalue().decode("utf-8")
                 

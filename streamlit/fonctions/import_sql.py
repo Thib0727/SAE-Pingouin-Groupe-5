@@ -4,18 +4,6 @@ import mysql.connector
 import re
 import subprocess   
 
-def connexion_mysql_root():
-    connexion = mysql.connector.connect(
-        host="mysql",
-        user="root",
-        password=os.getenv("MYSQL_ROOT_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE"),
-        use_pure=True  # <--- Ajoute ceci pour forcer le driver Python
-    )
-    return connexion
-
-
-
 def exec_import_natif(chemin_fichier):
     try:
         db_host = "mysql" 

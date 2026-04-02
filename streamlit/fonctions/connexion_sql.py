@@ -16,3 +16,10 @@ def get_connection_db_tdb():
         password=os.getenv("MYSQL_ROOT_PASSWORD"),
         database="exploit"
     )
+
+def connexion_mysql_root():
+    return mysql.connector.connect(
+        host="mysql",
+        user="root",
+        password=os.getenv("MYSQL_ROOT_PASSWORD"),
+    )
