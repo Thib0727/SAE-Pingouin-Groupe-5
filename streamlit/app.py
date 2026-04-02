@@ -30,6 +30,12 @@ st.sidebar.radio(
     key="page_active"  # modifie st.session_state.page_active automatiquement
 )
 
+st.sidebar.markdown("---")
+
+if st.sidebar.button("Se déconnecter"):
+    st.session_state.clear()
+    st.rerun()
+
 # --- Affichage dynamique selon la page active ---
 if st.session_state.page_active == "Accueil":
     accueil()
