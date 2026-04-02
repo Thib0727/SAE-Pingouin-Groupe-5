@@ -17,7 +17,7 @@ def data_conso_air_comprime(cursor):
     """
     cursor.execute(query)
     result = cursor.fetchall()
-    return pd.DataFrame(result, columns=["Date", "Air comprimé"])
+    return pd.DataFrame(result, columns=["Date-heure", "Air comprimé"])
 
 
 def data_conso_air_proche_moyenne(cursor):
@@ -33,21 +33,21 @@ def data_conso_air_proche_moyenne(cursor):
 
 def data_conso_electrique(cursor):
     query = """
-    SELECT
-        resourceid,
-        `start`,
-        `end`,
-        electricenergyreal AS puissance_watt,
-        TIMESTAMPDIFF(SECOND, `start`, `end`) / 3600 AS duree_heures,
-        (electricenergyreal * (TIMESTAMPDIFF(SECOND, `start`, `end`) / 3600)) / 1000 AS consommation_kwh
-    FROM tblfinstep;
+    SELECT End, ElectricEnergyCalc
+    FROM tblfinstep
+    WHERE DATE(End) = (
+        SELECT DATE(End)
+        FROM tblfinstep
+        WHERE ElectricEnergyCalc IS NOT NULL
+        ORDER BY End DESC
+        LIMIT 1
+    )
+    AND ElectricEnergyCalc IS NOT NULL
+    ORDER BY End DESC
     """
     cursor.execute(query)
     result = cursor.fetchall()
-    return pd.DataFrame(result, columns=[
-        "resourceid", "start", "end",
-        "puissance_watt", "duree_heures", "consommation_kwh"
-    ])
+    return pd.DataFrame(result, columns=["Date-heure","Consommation (mWs)"])
 
 
 def data_taux_remplissage_buffer(cursor):
@@ -108,17 +108,20 @@ def data_taux_conformite(cursor):
 
 def data_temps_machine(cursor):
     query = """
-    SELECT
-        SUM(busy) AS tps_busy_sec,
-        SUM(automaticmode) AS tps_auto_sec,
-        SUM(manualmode) AS tps_manuel_sec,
-        SUM(busy) + SUM(automaticmode) + SUM(manualmode) AS tps_total_sec
-    FROM tblmachinereport;
+    SELECT 
+        AVG(Busy) * 100 AS proportion_busy,
+        AVG(1 - Busy) * 100 AS proportion_non_busy
+    FROM tblmachinereport
+    WHERE DATE(TimeStamp) = (
+
+        SELECT DATE(MAX(TimeStamp))
+        FROM tblmachinereport
+    );
     """
     cursor.execute(query)
     result = cursor.fetchall()
     return pd.DataFrame(result, columns=[
-        "tps_busy_sec", "tps_auto_sec", "tps_manuel_sec", "tps_total_sec"
+        "Temps occupé","Temps libre"
     ])
 
 
@@ -142,16 +145,35 @@ def data_stock_mp(cursor):
         "pnogroup", "pno", "type", "stock_mp", "stock_max", "taux_remplissage_mp"
     ])
 
-
 def data_temps_rotation(cursor):
     query = """
-    SELECT
-        AVG(TIMESTAMPDIFF(SECOND, `start`, `end`)) AS temps_rotation_sec
-    FROM tblfinstep;
+    SELECT SUM(temps_moyen_etape) AS temps_rotation_total_secondes
+    FROM (
+        SELECT 
+            Description,
+            AVG(TIMESTAMPDIFF(SECOND, Start, End)) AS temps_moyen_etape
+        FROM tblfinstep
+        WHERE Description IN (
+            'feed back cover from magazine',
+            'Select PCB Box with content',
+            'Select Box with content',
+            'store box to target',
+            'Select parts to send into ASRS20'
+        )
+        AND DATE(End) = (
+            -- On cible uniquement la dernière journée d'activité
+            SELECT DATE(MAX(End)) 
+            FROM tblfinstep 
+            WHERE End IS NOT NULL
+        )
+        AND Start IS NOT NULL 
+        AND End IS NOT NULL
+        GROUP BY Description
+    ) AS sous_requete_moyennes;
     """
     cursor.execute(query)
     result = cursor.fetchall()
-    return pd.DataFrame(result, columns=["temps_rotation_sec"])
+    return pd.DataFrame(result, columns=["Moyenne temps rotation"])
 
 
 def data_buffer_parts(cursor):
