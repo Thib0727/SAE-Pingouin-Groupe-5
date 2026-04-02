@@ -69,7 +69,7 @@ st.markdown("""
 
 
 # Liste des pages accessibles selon le rôle
-pages = ["Accueil", "Importer la base de données", "Production", "Qualité & Logistique", "Gestion des Stocks & Robotique"]
+pages = ["Importer la base de données", "Production", "Qualité & Logistique", "Gestion des Stocks & Robotique"]
 
 
 # Ajouter la page admin si rôle = "admin"
@@ -107,9 +107,7 @@ if st.sidebar.button("Se déconnecter"):
     st.rerun()
 
 # --- Affichage dynamique selon la page active ---
-if st.session_state.page_active == "Accueil":
-    accueil()
-elif st.session_state.page_active == "Importer la base de données":
+if st.session_state.page_active == "Importer la base de données":
     import_bdd()
 elif st.session_state.page_active == "Gestion des utilisateurs":
     gestion_user()
