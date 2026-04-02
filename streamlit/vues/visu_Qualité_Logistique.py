@@ -102,3 +102,7 @@ def dashboard_visu_Qualité_Logistique():
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
         )
         st.plotly_chart(fig4, use_container_width=True, theme=None)
+
+
+if __name__ == "__main__":
+    dashboard_visu_Qualité_Logistique()
