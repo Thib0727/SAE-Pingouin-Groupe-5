@@ -302,9 +302,7 @@ def data_otif_par_jour(cursor):
     FROM tblorder 
     WHERE `End` <= PlannedEnd AND `End` IS NOT NULL 
     GROUP BY DATE(`End`)
-    
     UNION ALL
-    
     SELECT 
         DATE(`End`) AS Jour, 
         'Late' AS Type, 
@@ -312,7 +310,6 @@ def data_otif_par_jour(cursor):
     FROM tblorder 
     WHERE `End` > PlannedEnd AND `End` IS NOT NULL 
     GROUP BY DATE(`End`)
-    
     ORDER BY Jour, Type;
     """
     cursor.execute(query)
@@ -320,14 +317,6 @@ def data_otif_par_jour(cursor):
     df = pd.DataFrame(result, columns=["Jour", "Type", "Count"])
     df['Jour'] = df['Jour'].astype(str)
     return df
-    )
-    AND Start IS NOT NULL 
-    AND End IS NOT NULL
-    GROUP BY Description;
-    """
-    cursor.execute(query)
-    result = cursor.fetchall()
-    return pd.DataFrame(result, columns=["Etape","Temps moyen en secondes"])
 
 def data_lead_time_moyen(cursor):
     query = """
