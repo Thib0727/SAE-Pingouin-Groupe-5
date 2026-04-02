@@ -3,7 +3,7 @@ import bcrypt
 from fonctions.connexion_sql import get_connection_users
 
 def login():
-    st.title("Login")
+    st.title("Connexion")
 
     username = st.text_input("Utilisateur")
     password = st.text_input("Mot de passe", type="password")
