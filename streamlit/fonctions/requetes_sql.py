@@ -216,6 +216,80 @@ def data_temps_assemblage_moyen(cursor):
         SELECT DATE(MAX(End)) 
         FROM tblfinstep 
         WHERE End IS NOT NULL
+
+def data_conformite_assemblage(cursor):
+    query = """
+    SELECT 
+        CASE WHEN ErrorID = 0 THEN 'Conforme' ELSE 'Non conforme' END AS Status,
+        COUNT(*) AS Value
+    FROM tblpartsreport
+    WHERE ResourceID = 3  -- Remplacer 3 par le numéro exact de ta station d'assemblage si ce n'est pas ça
+    GROUP BY CASE WHEN ErrorID = 0 THEN 'Conforme' ELSE 'Non conforme' END;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return pd.DataFrame(result, columns=[
+        "Status", "Value"
+    ])
+
+def data_conformite_visuelle(cursor):
+    query = """
+    SELECT 
+        CASE WHEN ErrorID = 0 THEN 'Conforme' ELSE 'Non conforme' END AS Status,
+        COUNT(*) AS Value
+    FROM tblpartsreport
+    WHERE ResourceID = 5  -- À remplacer par le numéro exact de ta station caméra
+    GROUP BY CASE WHEN ErrorID = 0 THEN 'Conforme' ELSE 'Non conforme' END;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return pd.DataFrame(result, columns=["Status", "Value"])
+
+def data_pieces_manquantes_pbl(cursor):
+    query = """
+    SELECT 
+        DATE(TimeStamp) AS Jour,
+        COUNT(*) AS Value
+    FROM tblpartsreport
+    WHERE ErrorID IN (23, 31, 42)
+    GROUP BY DATE(TimeStamp)
+    ORDER BY DATE(TimeStamp)
+    LIMIT 5;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    # Formatage de la date pour un affichage plus propre (ex: "Jour 1", ou on garde la date SQL)
+    df = pd.DataFrame(result, columns=["Jour", "Value"])
+    df['Jour'] = df['Jour'].astype(str) # Convertit la date en texte pour Plotly
+    return df
+
+def data_otif_par_jour(cursor):
+    query = """
+    SELECT 
+        DATE(`End`) AS Jour, 
+        'On time' AS Type, 
+        COUNT(*) AS Count
+    FROM tblorder 
+    WHERE `End` <= PlannedEnd AND `End` IS NOT NULL 
+    GROUP BY DATE(`End`)
+    
+    UNION ALL
+    
+    SELECT 
+        DATE(`End`) AS Jour, 
+        'Late' AS Type, 
+        COUNT(*) AS Count
+    FROM tblorder 
+    WHERE `End` > PlannedEnd AND `End` IS NOT NULL 
+    GROUP BY DATE(`End`)
+    
+    ORDER BY Jour, Type;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    df = pd.DataFrame(result, columns=["Jour", "Type", "Count"])
+    df['Jour'] = df['Jour'].astype(str)
+    return df
     )
     AND Start IS NOT NULL 
     AND End IS NOT NULL
