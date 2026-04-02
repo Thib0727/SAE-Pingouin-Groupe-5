@@ -3,33 +3,36 @@ import pandas as pd
 import plotly.express as px
 
 
-def get_dashboard_data():
-     data = {
-         'Jour': ['Jour 1', 'Jour 2', 'Jour 3', 'Jour 4', 'Jour 5'],
-         'Air': [18, 26, 23, 35, 26],
-         'Assemblage': [18, 26, 23, 35, 26],
-         'Elec': [18, 10, 15, 25, 13],
-         'Bras': [18, 26, 23, 35, 26]
-     }
-     return pd.DataFrame(data)
-
 def dashboard_visu_Production():
     # 1. On force le titre principal en blanc
     st.markdown("<h1 style='text-align: center; color: white;'>Tableau de bord de production</h1>", unsafe_allow_html=True)
     
-    df = get_dashboard_data()
     if 'all_data' in st.session_state:
         df_air = st.session_state['all_data']['df_conso_air_comprime']
         df_tmps_ass_moyen = st.session_state['all_data']['df_temps_assemblage_moyen']
-
-
+        df_elec = st.session_state['all_data']['df_conso_electrique']
+        df_machine = st.session_state['all_data']['df_temps_machine']
+        df_rotation = st.session_state['all_data']['df_temps_rotation']
+        df_lead_time_moyen = st.session_state['all_data']['df_lead_time_moyen']
 
         # --- LIGNE 1 : KPI ---
         col_kpi1, col_kpi2, _ = st.columns([1, 1, 2])
         with col_kpi1:
-            st.metric("Temps de rotation moyen", "465 secondes")
+            # On extrait la valeur (en supposant qu'il n'y a qu'une ligne)
+            valeur_rotation = df_rotation['Moyenne temps rotation'].iloc[0]
+
+            # On l'affiche dans le metric en formatant pour ne pas avoir trop de décimales
+            st.metric("Temps de rotation moyen", f"{valeur_rotation:.0f} secondes")
         with col_kpi2:
-            st.metric("Lead Time moyen", "1h 30")
+            # 1. Vérifier d'abord si le DataFrame n'est pas vide
+            if df_lead_time_moyen.empty or pd.isna(df_lead_time_moyen['lead_time_moyen'].iloc[0]):
+                st.metric("Lead time moyen", "Pas de données")
+            else:
+                # 2. Récupérer la valeur
+                valeur_lead_time = df_lead_time_moyen['lead_time_moyen'].iloc[0]
+                
+                # 3. Affichage (conversion en int pour supprimer les .0)
+                st.metric("Lead time moyen", f"{int(valeur_lead_time)} secondes")
 
         st.write("---")
 
@@ -39,7 +42,7 @@ def dashboard_visu_Production():
         with col1:
             st.markdown("<h3 style='color: white; text-align: center; font-family: sans-serif;'>CONSOMMATION D'AIR COMPRIMÉ</h3>", unsafe_allow_html=True)
 
-            fig_air = px.line(df_air, x='Date', y='Air comprimé')
+            fig_air = px.line(df_air, x='Date-heure', y='Air comprimé')
             fig_air.update_traces(line_color='#00f2ff', line_width=4, mode='lines+markers')
             fig_air.update_layout(template="plotly_dark", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(t=20), font=dict(color="white"))
 
@@ -81,14 +84,37 @@ def dashboard_visu_Production():
         col3, col4 = st.columns(2)
         with col3:
             st.markdown("<h3 style='color: white; text-align: center; font-family: sans-serif;'>CONSOMMATION D'ÉLECTRICITÉ</h3>", unsafe_allow_html=True)
-            fig_elec = px.line(df, x='Jour', y='Elec')
+            fig_elec = px.line(df_elec, x='Date-heure', y='Consommation (mWs)')
             fig_elec.update_traces(line_color='#ffff00', line_width=4, mode='lines+markers')
             fig_elec.update_layout(template="plotly_dark", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(t=20), font=dict(color="white"))
             st.plotly_chart(fig_elec, use_container_width=True, theme=None)
 
         with col4:
             st.markdown("<h3 style='color: white; text-align: center; font-family: sans-serif;'>UTILISATION DU BRAS ROBOTISÉ</h3>", unsafe_allow_html=True)
-            fig_bras = px.line(df, x='Jour', y='Bras')
-            fig_bras.update_traces(line_color='#00f2ff', line_width=4, mode='lines+markers')
-            fig_bras.update_layout(template="plotly_dark", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(t=20), font=dict(color="white"))
+
+            fig_bras = px.pie(
+                names=['Temps occupé', 'Temps libre'],
+                values=[df_machine['Temps occupé'].iloc[0], df_machine['Temps libre'].iloc[0]],
+                hole=0.6,
+                color_discrete_sequence=['#00f2ff', '#333333']
+)
+
+            # Style et cosmétique
+            fig_bras.update_traces(
+                textposition='inside', 
+                textinfo='percent',
+                hoverinfo='label+value',
+                marker=dict(line=dict(color='#00f2ff', width=1))
+            )
+
+            fig_bras.update_layout(
+                template="plotly_dark", 
+                plot_bgcolor='rgba(0,0,0,0)', 
+                paper_bgcolor='rgba(0,0,0,0)', 
+                margin=dict(t=30, b=0, l=0, r=0), 
+                font=dict(color="white"),
+                showlegend=True,
+                legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
+            )
+
             st.plotly_chart(fig_bras, use_container_width=True, theme=None)
