@@ -45,7 +45,8 @@ def load_all_kpi_data():
             "df_conformite_assemblage" : data_conformite_assemblage(cursor),
             "df_verif_visuelle" : data_conformite_visuelle(cursor),
             "df_pieces_manquantes" : data_pieces_manquantes_pbl(cursor),
-            "df_otif" : data_otif_par_jour(cursor)
+            "df_otif" : data_otif_par_jour(cursor),
+            "df_lead_time_moyen": data_lead_time_moyen(cursor)
         }
     finally:
         cursor.close()
