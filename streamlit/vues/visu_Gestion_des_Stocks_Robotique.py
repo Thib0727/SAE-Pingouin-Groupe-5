@@ -18,7 +18,7 @@ def dashboard_visu_Gestion_des_Stocks_Robotique():
 
     df_stock_mp         = data["df_stock_mp"]              # pnogroup, pno, type, stock_mp, stock_max, taux_remplissage_mp
     df_taux_remplissage = data["df_taux_remplissage_buffer"]  # pno, quantity, quantity_max, taux_remplissage
-    df_temps_rotation   = data["df_temps_rotation"]        # temps_rotation_sec  (scalaire)
+    df_temps_rotation   = data["df_temps_rotation_t"]        # temps_rotation_sec  (scalaire)
     df_buffer_parts     = data["df_buffer_parts"]          # pno, type, quantity
 
     # ------------------------------------------------------------------ #
