@@ -57,6 +57,8 @@ def dashboard_visu_Production():
         fig_elec.update_layout(template="plotly_dark", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(t=20), font=dict(color="white"))
         st.plotly_chart(fig_elec, use_container_width=True, theme=None)
 
+if __name__ == "__main__":
+    dashboard_visu_Production()
     with col4:
         st.markdown("<h3 style='color: white; text-align: center; font-family: sans-serif;'>UTILISATION DU BRAS ROBOTISÉ</h3>", unsafe_allow_html=True)
         fig_bras = px.line(df, x='Jour', y='Bras')
