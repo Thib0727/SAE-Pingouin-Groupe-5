@@ -70,4 +70,4 @@ def dashboard_visu_Gestion_des_Stocks_Robotique():
         st.metric("Taux remplissage magasin PF", "94%")
 
 if __name__ == "__main__":
-    dashboard_visu3()
+    dashboard_visu_Gestion_des_Stocks_Robotique()
