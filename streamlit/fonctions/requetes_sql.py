@@ -334,3 +334,13 @@ def data_lead_time_moyen(cursor):
     cursor.execute(query)
     result = cursor.fetchall()
     return pd.DataFrame(result, columns=["lead_time_moyen"])
+
+def data_temps_rotation_t(cursor):
+    query = """
+    SELECT
+        AVG(TIMESTAMPDIFF(SECOND, start, end)) AS temps_rotation_sec
+    FROM tblfinstep;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return pd.DataFrame(result, columns=["temps_rotation_sec"])
