@@ -238,6 +238,14 @@ def data_temps_assemblage_moyen(cursor):
         SELECT DATE(MAX(End)) 
         FROM tblfinstep 
         WHERE End IS NOT NULL
+    )
+    AND Start IS NOT NULL 
+    AND End IS NOT NULL
+    GROUP BY Description;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return pd.DataFrame(result, columns=["Etape","Temps moyen en secondes"])
 
 def data_conformite_assemblage(cursor):
     query = """
@@ -320,3 +328,20 @@ def data_otif_par_jour(cursor):
     cursor.execute(query)
     result = cursor.fetchall()
     return pd.DataFrame(result, columns=["Etape","Temps moyen en secondes"])
+
+def data_lead_time_moyen(cursor):
+    query = """
+    SELECT 
+        SUM(TIMESTAMPDIFF(SECOND, Start, End)) / COUNT(ONo) AS temps_realisation_moyen_secondes
+    FROM tblorder
+    WHERE DATE(End) = (
+        SELECT DATE(MAX(End)) 
+        FROM tblorder 
+        WHERE End IS NOT NULL
+    )
+    AND Start IS NOT NULL 
+    AND End IS NOT NULL;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return pd.DataFrame(result, columns=["lead_time_moyen"])
