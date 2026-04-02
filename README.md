@@ -23,3 +23,5 @@ password : rootpassword
 
 username app : admin<br>
 mdp app : adminpassword<br>
+
+Importer la bdd "mes4.sql" pour obtenir des données
