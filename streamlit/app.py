@@ -1,6 +1,5 @@
 import streamlit as st
 from vues.page_login import login, check_auth
-from vues.page_accueil import accueil
 from vues.page_import_bdd import import_bdd
 from vues.page_admin import gestion_user
 from fonctions.connexion_sql import get_connection_db_tdb, connexion_mysql_root, base_existe
